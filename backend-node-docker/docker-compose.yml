@@ -5,10 +5,10 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tareas_db
-      MYSQL_USER: tarea_user
-      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${tareas_db}
+      MYSQL_USER: ${tarea_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -23,13 +23,13 @@ services:
       - mysql
 
   backend:
-    build: ./backend-node-docker
+    build: .
     ports:
       - "3000:3000"
     depends_on:
       - mysql
-    environment:
-      - .env
+    env_file:
+      - .env.test
     volumes:
       - ./:/usr/src/app
 
