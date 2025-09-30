@@ -1,5 +1,6 @@
 require('dotenv').config();
 const tareaRoutes = require("./routes/tareaRoutes");
+const authRoutes = require('./routes/authRoutes')
 
 const express = require('express');
 const app = express();
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', tareaRoutes);
+app.use('/api', authRoutes)
 
 app.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
