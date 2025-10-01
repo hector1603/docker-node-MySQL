@@ -1,0 +1,113 @@
+openapi: 3.0.0
+
+info:
+  title: API de Gestión de Tareas
+  version: 1.0.0
+  description: API para gestión de tareas con autenticación JWT
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+
+paths:
+  /api/login:
+    post:
+      summary: Iniciar sesión
+      description: Iniciar sesión con usuario y contraseña devuelve un JWT
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email del usuario
+                  example: example@gmail.com
+                password:
+                  type: string
+                  description: contraseña del usuario
+                  example: example123
+      responses:
+        '200':
+          description: Inicio de sesión exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de respuesta
+                    example: "Usuario logueado correctamente"
+                  data:
+                    type: string
+                    description: Token JWT
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '400':
+          description: Error en los datos enviados
+        '500':
+          description: Error del servidor
+
+  /api/registrar:
+    post:
+      summary: Registrar usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: example@gmail.com
+                password:
+                  type: string
+                  example: example123
+                rol:
+                  type: string
+                  example: "usuario"
+
+      responses:
+        '201':
+          description: Usuario registrado
+        '500':
+          description: Error del servidor
+
+  /api/logout:
+    post:
+      summary: Cerrar sesión
+      description: Revoca el token JWT actual agregándolo a la blacklist
+      tags:
+        - Autenticación
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Sesión cerrada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Sesión cerrada correctamente."
+        '401':
+          description: Token ausente o inválido
+        '500':
+          description: Error del servidor
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

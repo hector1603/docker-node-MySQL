@@ -7,7 +7,7 @@ async function registerUser(data) {
     const userExiste = await userRepository.getForEmail(data.email);
     if(userExiste) throw new Error('El usuario ya existe!')
     const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-    const user = await userRepository.createUser({ ...data, password: hashedPassword, rol: 'usuario' });
+    const user = await userRepository.createUser({ ...data, password: hashedPassword, rol: data.rol });
     return user;
 }
 
@@ -28,23 +28,7 @@ async function loginUsuario(data) {
     return token;
 }
 
-function verificarToken(req, res, next) {
-    const authHeader = req.headers.authorization;
-    if(!authHeader) return res.status(401).json({ message: 'No se proporsiono el token' });
-
-    const token = authHeader.split(' ')[1];
-
-    try {
-        const decoded = jwt.verify(token, secret_key);
-        req.user = decoded;
-        next();
-    } catch(error) {
-        return res.status(401).json({ message: 'Token invalido!' });
-    }
-}
-
 module.exports = {
     registerUser,
-    loginUsuario,
-    verificarToken
+    loginUsuario
 }

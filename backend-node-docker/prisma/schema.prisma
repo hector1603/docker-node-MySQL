@@ -24,3 +24,9 @@ model Tarea {
   usuarioId     Int
   usuario       Usuario @relation(fields: [usuarioId], references: [id]) // ¡Aquí está la corrección!
 }
+
+model tokenRevocado {
+  id        Int       @id @default(autoincrement())
+  token     String    @unique
+  createdAt DateTime  @default(now())
+}

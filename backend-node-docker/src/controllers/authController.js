@@ -1,4 +1,5 @@
-const authServices = require('../services/authServices');
+const authServices = require('../services/authServices'); 
+const blackListRepo = require('../repositories/tokenBlackListRepository');
 
 async function registerUser(req, res) {
     try {
@@ -18,7 +19,22 @@ async function loginUser(req, res) {
     }
 }
 
+async function logout(req, res) {
+    const authHeader = req.headers.authorization;
+
+    if(!authHeader) return res.status(401).json({ message: 'No se proporciono el token.' });
+
+    const token = authHeader.split(' ')[1];
+
+    if(!token) return res.status(401).json({ message: 'No se proporciono el tokensito' });
+
+    await blackListRepo.agregarToken(token);
+
+    res.json({ message: 'Sesión cerrada correctamente.' });
+}
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    logout
 }
